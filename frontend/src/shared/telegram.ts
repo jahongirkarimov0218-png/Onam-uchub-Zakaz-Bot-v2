@@ -32,6 +32,11 @@ type TelegramWebApp = {
   };
 };
 
+// Module-level: the one BackButton handler currently registered with
+// Telegram, so `show()`/`hide()` can always offClick the handler that is
+// actually attached — not the (different) closure the caller happens to pass.
+let currentBackHandler: (() => void) | null = null;
+
 function webApp(): TelegramWebApp | undefined {
   return typeof window !== "undefined"
     ? (window as unknown as { Telegram?: { WebApp?: TelegramWebApp } }).Telegram?.WebApp
@@ -77,14 +82,21 @@ export const tg = {
     });
   },
   backButton: {
+    /** Replaces the previously registered handler (offClick'ing it first) so
+     * that repeated `show()` calls with a fresh closure — e.g. once per route
+     * change — never stack up listeners on Telegram's BackButton. */
     show(onClick: () => void): void {
       const bb = webApp()?.BackButton;
-      bb?.offClick?.(onClick);
+      if (currentBackHandler) bb?.offClick?.(currentBackHandler);
+      currentBackHandler = onClick;
       bb?.onClick?.(onClick);
       bb?.show?.();
     },
     hide(): void {
-      webApp()?.BackButton?.hide?.();
+      const bb = webApp()?.BackButton;
+      if (currentBackHandler) bb?.offClick?.(currentBackHandler);
+      currentBackHandler = null;
+      bb?.hide?.();
     },
   },
   haptic: {

@@ -90,3 +90,9 @@ API contracts, data model and settings: `spec.md` -> «Решения по ре�
 - `create_app(settings=None, notifier=None)` default notifier `NullNotifier()`. Backend: 119 tests, coverage 88%.
 - (T05 repair) `Logo({size?, label?})`; ESLint flat config `frontend/eslint.config.js`, `npm run lint` (0 errors required). BackButton wired in App per route. Frontend: 28 tests.
 - (T03 repair) `normalize_phone` accepts spaces/dashes/parens and any `+` 9–15 digits; `change_status` uses conditional UPDATE (race-safe); `delivered_month_sum` by `→delivered` history time. **T04: don't rely on `updated_at` for business time.** Backend: 127 tests.
+
+### Из таска 06 — admin Mini App
+
+- `src/shared/status.ts`: `NEXT`, `FINAL` (Set), `STATUSES`, `OrderStatus`, `allowed(from,to)`, `nextStatus(from)`, `statusLabel(code)` (i18n `status.*`).
+- `src/admin/App.tsx` `App()`: gate on `GET /api/admin/me` (401/403 → only "Ruxsat yo'q"); tabs Zakazlar / Mahsulotlar / Kategoriyalar; routes `#/orders`, `#/orders/:id`, `#/products`, `#/categories` (product/category forms inline, no `#/products/:id`). OrderDetail: `POST /api/admin/orders/:id/status {status}`, cancel with inline confirm. Frontend: 54 tests.
+- (T06 repair) `tg.backButton.show/hide` keep one registered handler internally (no leak). Admin gate: 401/403 → forbidden, other errors → retry screen. Frontend: 67 tests.

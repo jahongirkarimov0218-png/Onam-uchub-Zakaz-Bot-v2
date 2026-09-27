@@ -47,3 +47,4 @@ Brief: "Sessiya davomida savol berma. Qarorlarni o'zing qabul qil va docs/DECISI
 | S22 | R28 | ASSUMPTION — клиент видит только свои заказы (по Telegram user id); отменить сам не может (в брифе нет). |
 | S23 | R22, R47 | ASSUMPTION — цены в seed — явно выдуманные образцы для демо, помечены в README как «namunaviy»; реальные цены вводит админ. |
 - D-P6: T05 React review (HIGH) — loyihada lint yo'q edi. ESLint (react-hooks, jsx-a11y, typescript-eslint) ruxsat etilgan paketlar ro'yxatiga qo'shildi, `npm run lint` frontend sifat tekshiruvining bir qismi.
+- D-P7: Admin Mini App'da mahsulot/kategoriya formalari alohida `#/products/:id` sahifasi emas, shu tab ichida ochiladi (backendda bitta mahsulotni olish endpointi yo'q; funksional talablar to'liq bajarilgan). Spetsifikatsiyadagi marshrutdan ongli chetlanish.

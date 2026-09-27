@@ -18,19 +18,25 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from ..auth import TgUser
 from ..models import Order, OrderItem, OrderStatusHistory, Product, Upload
 from ..notify import Notifier
+from ..statuses import FINAL, LABELS_UZ, NEXT, allowed
 
 logger = logging.getLogger(__name__)
 
-NEXT = {"new": "accepted", "accepted": "ordered", "ordered": "arrived", "arrived": "delivered"}
-FINAL = {"delivered", "cancelled"}
-LABELS_UZ = {
-    "new": "Yangi",
-    "accepted": "Qabul qilindi",
-    "ordered": "Faberlic'ga buyurtma berildi",
-    "arrived": "Yetib keldi",
-    "delivered": "Topshirildi",
-    "cancelled": "Bekor qilindi",
-}
+__all__ = [
+    "NEXT",
+    "FINAL",
+    "LABELS_UZ",
+    "allowed",
+    "OrderError",
+    "InvalidTransition",
+    "create_order",
+    "change_status",
+    "load_order",
+    "search_orders",
+    "list_orders",
+    "open_orders",
+    "stats",
+]
 
 
 class OrderError(Exception):
@@ -47,10 +53,6 @@ class InvalidTransition(OrderError):
 
     def __init__(self) -> None:
         super().__init__("invalid_transition", 409)
-
-
-def allowed(from_status: str, to_status: str) -> bool:
-    return NEXT.get(from_status) == to_status or (to_status == "cancelled" and from_status not in FINAL)
 
 
 async def _notify_safely(notifier: Notifier | None, method: str, arg: object) -> None:

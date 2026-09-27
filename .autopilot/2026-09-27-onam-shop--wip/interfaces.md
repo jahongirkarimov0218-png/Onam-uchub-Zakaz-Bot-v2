@@ -96,3 +96,13 @@ API contracts, data model and settings: `spec.md` -> «Решения по ре�
 - `src/shared/status.ts`: `NEXT`, `FINAL` (Set), `STATUSES`, `OrderStatus`, `allowed(from,to)`, `nextStatus(from)`, `statusLabel(code)` (i18n `status.*`).
 - `src/admin/App.tsx` `App()`: gate on `GET /api/admin/me` (401/403 → only "Ruxsat yo'q"); tabs Zakazlar / Mahsulotlar / Kategoriyalar; routes `#/orders`, `#/orders/:id`, `#/products`, `#/categories` (product/category forms inline, no `#/products/:id`). OrderDetail: `POST /api/admin/orders/:id/status {status}`, cancel with inline confirm. Frontend: 54 tests.
 - (T06 repair) `tg.backButton.show/hide` keep one registered handler internally (no leak). Admin gate: 401/403 → forbidden, other errors → retry screen. Frontend: 67 tests.
+
+### Из таска 04 — botlar, eslatmalar, lifespan
+
+- `app.statuses`: `NEXT`, `FINAL`, `LABELS_UZ`, `allowed` (re-exported by `app.services.orders`). `app.texts`: all bot texts.
+- `app.notify.TelegramNotifier(customer_bot, admin_bot, settings, session_factory)`; `format_order(order) -> str`; `order_keyboard(order) -> InlineKeyboardMarkup|None`; callback data `st:<order_id>:<status>`.
+- `app.bots.customer.customer_router(settings)`, `app.bots.admin.admin_router(settings, session_factory, notifier)` (commands via `F.text` filters).
+- `app.scheduler`: `remind_and_retry(...)`, `daily_report(...)`, `build_scheduler(session_factory, notifier, settings)`.
+- `app.main.build_bot(token, settings)` — `TELEGRAM_API_BASE` set → `AiohttpSession(api=TelegramAPIServer.from_base(...))`. Lifespan: `bots_active` → 2 bots polling (`handle_signals=False`) + TelegramNotifier + scheduler; else NullNotifier + scheduler. **E2E: set `BOTS_ENABLED=true`, fake tokens, `TELEGRAM_API_BASE=http://127.0.0.1:<mock port>`; mock must answer getMe, deleteWebhook, getUpdates, sendMessage, sendPhoto, editMessageText, answerCallbackQuery.**
+- Backend: 171 tests, coverage 89%.
+- (T04 repair) commands accept `@BotName`; admins get `texts.ADMIN_HELP` on unknown input; `/order_<id>` messages stored in `order_admin_messages`; lifespan closes bot sessions and sets admin menu button when WEBAPP_URL set; scheduler jobs reject naive `now`. Backend: 189 tests, 90%.

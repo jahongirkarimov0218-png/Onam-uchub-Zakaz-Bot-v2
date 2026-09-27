@@ -1,5 +1,8 @@
 from conftest import sign_init_data
 
+from app.main import create_app
+from app.notify import NullNotifier
+
 CUSTOMER_TOKEN = "111111:TEST-customer"
 ADMIN_TOKEN = "222222:TEST-admin"
 
@@ -40,3 +43,8 @@ async def test_admin_me_with_admin_in_list_is_200(client):
 async def test_app_serves_asgi_smoke(app):
     # create_app must succeed and produce a usable ASGI app with BOTS_ENABLED=false.
     assert app.state.settings.bots_active is False
+
+
+def test_create_app_defaults_notifier_to_null_notifier(settings):
+    app = create_app(settings=settings)
+    assert isinstance(app.state.notifier, NullNotifier)

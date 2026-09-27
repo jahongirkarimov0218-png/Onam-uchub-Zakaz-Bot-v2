@@ -6,26 +6,29 @@ from pathlib import Path
 from fastapi import Depends, FastAPI
 from fastapi.staticfiles import StaticFiles
 
-from .api import admin_catalog, catalog
+from .api import admin_catalog, admin_orders, catalog, orders
 from .auth import TgUser, admin_user
 from .config import Settings, get_settings
 from .db import make_engine, make_session_factory
+from .notify import Notifier, NullNotifier
 from .ratelimit import RateLimiter
 
 
 def include_routers(app: FastAPI) -> None:
-    """Extension point for later tickets: ticket 02 (catalog/uploads) registers here;
-    ticket 03 (orders) reuses `app.state.order_limiter` and adds its own router."""
+    """Extension point for later tickets. Reuses `app.state.order_limiter` /
+    `app.state.notifier`, set up in `create_app` before this runs."""
     app.include_router(catalog.router)
     app.include_router(admin_catalog.router)
+    app.include_router(orders.router)
+    app.include_router(admin_orders.router)
 
 
-def create_app(settings: Settings | None = None, notifier: object | None = None) -> FastAPI:
+def create_app(settings: Settings | None = None, notifier: Notifier | None = None) -> FastAPI:
     settings = settings or get_settings()
 
     app = FastAPI()
     app.state.settings = settings
-    app.state.notifier = notifier
+    app.state.notifier = notifier or NullNotifier()
     app.dependency_overrides[get_settings] = lambda: settings
 
     engine = make_engine(settings.database_url)

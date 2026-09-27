@@ -46,3 +46,4 @@ Brief: "Sessiya davomida savol berma. Qarorlarni o'zing qabul qil va docs/DECISI
 | S21 | R43, R52 | ASSUMPTION — файлы в `backend/uploads/` под именем `uuid4.<ext по содержимому>`, раздаются по `/uploads/…`; имя не угадывается. |
 | S22 | R28 | ASSUMPTION — клиент видит только свои заказы (по Telegram user id); отменить сам не может (в брифе нет). |
 | S23 | R22, R47 | ASSUMPTION — цены в seed — явно выдуманные образцы для демо, помечены в README как «namunaviy»; реальные цены вводит админ. |
+- D-P6: T05 React review (HIGH) — loyihada lint yo'q edi. ESLint (react-hooks, jsx-a11y, typescript-eslint) ruxsat etilgan paketlar ro'yxatiga qo'shildi, `npm run lint` frontend sifat tekshiruvining bir qismi.

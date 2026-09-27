@@ -59,3 +59,24 @@ API contracts, data model and settings: `spec.md` -> «Решения по ре�
 - Tests: `backend/tests/conftest.py` fixtures `settings`, `fake_notifier` (`FakeNotifier.events`, async `order_created/status_changed/reminder/daily_report`), `app` (create_all), `client` (httpx AsyncClient + ASGITransport); helper `from conftest import sign_init_data` → `sign_init_data(user: dict, bot_token: str, auth_date: int|None=None) -> str`.
 - Test command: `cd backend && ../.venv/Scripts/python.exe -m pytest` (25 passed after T01, coverage 92%).
 - Review notes for later tickets: DB datetime columns are naive (SQLite drops tzinfo) — values are UTC; re-attach `timezone.utc` when reading (orders, scheduler, stats). `PICKUP_ADDRESS` may be empty in `.env` — code that exposes it (`/api/config`) must fall back to the placeholder text «[Olib ketish manzili — .env faylida PICKUP_ADDRESS]» when empty.
+
+### Из таска 05 — frontend shared (provisional, ticket in progress)
+
+- `src/shared/telegram.ts` `tg`: `initData: string`, `user: TgUser|null`, `ready()`, `expand()`, `requestContact(): Promise<string|null>`, `backButton.show(onClick)/.hide()`, `haptic.impact(style?)/.notification(type?)`.
+- `src/shared/api.ts` `api<T>(path, {method?, body?, headers?}): Promise<T>` — adds `Authorization: tma <initData>`, JSON unless FormData; throws `ApiError extends Error {status, code, message}` (code = server `detail`, or `network` / `generic` / `rate_limited`).
+- `src/shared/i18n/uz.ts` `uz` dict with dot-path keys (`errors.not_found`), `t(key, params?)` with `{param}` interpolation.
+- `src/shared/format.ts` `formatSum(n)` → `125 000 so'm`, `formatDate(iso)`. `src/shared/router.ts` `useHashRoute(): string`, `navigate(path)`. `src/shared/theme.css` (linked in both HTML entries). `src/shared/Logo.tsx`.
+- Vite: `build.rollupOptions.input = {app: app/index.html, admin: admin/index.html}`; vitest jsdom with `test/setup.ts` (MemoryStorage localStorage polyfill — jsdom localStorage broken under Node 26 + vitest 2.1.9).
+- Frontend tests: `cd frontend && npx vitest run`.
+
+### Из таска 02 — katalog, yuklash, rate limit, seed
+
+- `app.ratelimit.RateLimiter(limit, window).hit(key, now=None) -> bool`, `.reset()`; instances `app.state.upload_limiter`, `app.state.order_limiter` built in `create_app` from settings. **Ticket 03: reuse `order_limiter.hit(user.id)` in `POST /api/orders` (→ 429 `rate_limited`).**
+- `app.uploads.save_upload(file, kind, user_id, session, settings) -> Upload` raises `UploadError(code, http_status)`; `public_url(filename) -> str` (`/uploads/<name>`).
+- `app.services.catalog`: `list_categories`, `create_category`, `rename_category`, `delete_category`, `list_products(session, category_id=None, q=None)`, `get_product`, `get_visible_product(session, id)`, `create_product(session, **fields)`, `update_product(session, id, **fields)`, `delete_product(session, id)`; `CatalogError(code, http_status)`.
+- `app.schemas.catalog`: `ConfigOut, CategoryOut, CategoryIn, ProductOut, ProductIn, ProductPatch, UploadOut`. `app.api.catalog.product_to_out(product) -> ProductOut` (reuse for image urls).
+- Routers: `app.api.catalog.router` (customer), `app.api.admin_catalog.router` (prefix `/api/admin`, `dependencies=[Depends(admin_user)]`) — registered in `include_routers`.
+- `app.seed.seed(session_factory, upload_dir: Path)`; CLI `python -m app.seed` (idempotent; SVGs in `UPLOAD_DIR/seed/`).
+- `/api/config` `shop_subtitle` is a fixed constant in `app/api/catalog.py` («Faberlic konsultanti do'koni»).
+- Backend: 53 tests, coverage 83% after T02.
+- (T05 final) `src/app/App.tsx` `App()` — hash routes `/`, `/product/:id`, `/cart`, `/custom`, `/checkout`, `/orders`, `/done/:id`; `NoInitData` (no fetch) when `tg.initData` empty. Screens in `src/app/screens/`: `Catalog`, `ProductDetail`, `CartScreen`, `CustomForm` (`CustomFormResult`), `Checkout({cart, pickupAddress, onSuccess})` posting `OrderCreate` (phone regex `/^(\+998\d{9}|\d{9,15})$/`), `Orders`, `Done`, `NoInitData`. App clears cart in `onSuccess`. Test files use `globalThis.fetch` (no @types/node). Frontend: 18 tests; `npm run build` → `dist/app/index.html`, `dist/admin/index.html`.

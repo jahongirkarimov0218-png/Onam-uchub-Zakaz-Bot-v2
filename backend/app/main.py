@@ -6,15 +6,18 @@ from pathlib import Path
 from fastapi import Depends, FastAPI
 from fastapi.staticfiles import StaticFiles
 
+from .api import admin_catalog, catalog
 from .auth import TgUser, admin_user
 from .config import Settings, get_settings
 from .db import make_engine, make_session_factory
+from .ratelimit import RateLimiter
 
 
 def include_routers(app: FastAPI) -> None:
-    """Extension point for later tickets: ticket 02 (catalog/uploads),
-    ticket 03 (orders) register their routers here."""
-    # Intentionally left for later tickets.
+    """Extension point for later tickets: ticket 02 (catalog/uploads) registers here;
+    ticket 03 (orders) reuses `app.state.order_limiter` and adds its own router."""
+    app.include_router(catalog.router)
+    app.include_router(admin_catalog.router)
 
 
 def create_app(settings: Settings | None = None, notifier: object | None = None) -> FastAPI:
@@ -28,6 +31,9 @@ def create_app(settings: Settings | None = None, notifier: object | None = None)
     engine = make_engine(settings.database_url)
     app.state.engine = engine
     app.state.session_factory = make_session_factory(engine)
+
+    app.state.upload_limiter = RateLimiter(settings.rate_limit_uploads, settings.rate_limit_window_seconds)
+    app.state.order_limiter = RateLimiter(settings.rate_limit_orders, settings.rate_limit_window_seconds)
 
     @app.get("/health")
     async def health() -> dict:

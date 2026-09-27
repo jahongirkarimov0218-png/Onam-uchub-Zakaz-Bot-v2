@@ -15,7 +15,7 @@
 | R07 | «Fayllarni faqat "D:\ecc tool\onam-shop" ichida yarat» (+ весь блок <safety>) | in-spec | процесс — ведёт оркестратор | spec «Процесс» |
 | R08 | «Haqiqiy Telegram API'ga murojaat qilish [taqiqlangan]. Testlarda bot va Telegram mock qilinadi» | in-ticket | — | T01,T04,T07 |
 | R09 | «Placeholder rasmlarni lokal yarat (masalan, SVG)» | in-ticket | — | T02 |
-| R10 | «Backend: Python 3.11, FastAPI, aiogram 3 (2 ta bot bitta jarayonda), SQLAlchemy 2 async, SQLite (aiosqlite), Alembic, pydantic-settings, APScheduler» | in-ticket | — | T01,T04 |
+| R10 | «Backend: Python 3.11, FastAPI, aiogram 3 (2 ta bot bitta jarayonda), SQLAlchemy 2 async, SQLite (aiosqlite), Alembic, pydantic-settings, APScheduler» | in-ticket | T01 done | T01,T04 |
 | R11 | «Frontend: React 18 + Vite + TypeScript. Telegram WebApp SDK (telegram-web-app.js)» | in-ticket | — | T05 |
 | R12 | «Telegram themeParams bilan light/dark mavzu» | in-ticket | — | T05,T06 |
 | R13 | «2 ta frontend entry: /app (mijoz Mini App) va /admin (admin Mini App)» | in-ticket | — | T05,T06 |

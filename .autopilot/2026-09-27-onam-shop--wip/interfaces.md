@@ -48,3 +48,14 @@ API contracts, data model and settings: `spec.md` -> «Решения по ре�
 ## Что построили таски
 
 (appended by the orchestrator as tickets land)
+
+### Из таска 01 — backend asosi
+
+- `app.config`: `Settings(customer_bot_token, admin_bot_token, admin_ids, bots_enabled, webapp_url, telegram_api_base, shop_name, pickup_address, database_url, upload_dir, frontend_dist, init_data_max_age_seconds, reminder_first_hours, reminder_repeat_hours, reminder_check_minutes, daily_report_time, timezone, rate_limit_orders, rate_limit_uploads, rate_limit_window_seconds, max_upload_mb, domain)`; `.admin_id_set -> set[int]`; `.bots_active -> bool`; `get_settings()` (lru_cache).
+- `app.db`: `make_engine(url) -> AsyncEngine`; `make_session_factory(engine) -> async_sessionmaker[AsyncSession]`; `get_session(request)` dependency (uses `request.app.state.session_factory`).
+- `app.models`: `Base, Category, Product, Upload, Order, OrderItem, OrderStatusHistory, OrderAdminMessage` (spec Data model). New columns/tables → new Alembic revision (`alembic revision --autogenerate`); `alembic/env.py` strips `+aiosqlite` for sync DDL.
+- `app.auth`: `validate_init_data(raw, bot_token, max_age, now=None) -> TgUser`; `InitDataError(code)` codes `invalid_init_data | init_data_expired`; `TgUser(id, first_name, last_name, username, language_code)`; deps `customer_user` (401) / `admin_user` (401, 403 `forbidden`).
+- `app.main`: `create_app(settings=None, notifier=None) -> FastAPI`; `app.state.{settings, notifier, engine, session_factory}`; `app.dependency_overrides[get_settings]` set; `GET /health`, `GET /api/admin/me`; **routers are added inside `include_routers(app)`** (called before static mounts); `/uploads` static (dir created), `FRONTEND_DIST` at `/` (html=True) only if exists.
+- Tests: `backend/tests/conftest.py` fixtures `settings`, `fake_notifier` (`FakeNotifier.events`, async `order_created/status_changed/reminder/daily_report`), `app` (create_all), `client` (httpx AsyncClient + ASGITransport); helper `from conftest import sign_init_data` → `sign_init_data(user: dict, bot_token: str, auth_date: int|None=None) -> str`.
+- Test command: `cd backend && ../.venv/Scripts/python.exe -m pytest` (25 passed after T01, coverage 92%).
+- Review notes for later tickets: DB datetime columns are naive (SQLite drops tzinfo) — values are UTC; re-attach `timezone.utc` when reading (orders, scheduler, stats). `PICKUP_ADDRESS` may be empty in `.env` — code that exposes it (`/api/config`) must fall back to the placeholder text «[Olib ketish manzili — .env faylida PICKUP_ADDRESS]» when empty.

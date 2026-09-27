@@ -11,7 +11,7 @@ window.STATE =
   "memoryFile": "CLAUDE.md",
   "skillDir": "C:/Users/user/.claude/skills/autopilot",
   "startedAt": "2026-09-27T15:46:43+05:00",
-  "updatedAt": "2026-09-27T16:00:58+05:00",
+  "updatedAt": "2026-09-27T16:11:41+05:00",
   "finishedAt": null,
   "stages": [
     {
@@ -67,6 +67,7 @@ window.STATE =
   "tickets": [
     {
       "id": "01",
+      "startedAt": "2026-09-27T16:01:51+05:00",
       "title": "Backend asosi: sozlamalar, DB, migratsiya, initData auth, /health",
       "requirements": [
         "R10",
@@ -84,7 +85,7 @@ window.STATE =
       "zone": [
         "backend/"
       ],
-      "status": "pending",
+      "status": "review",
       "retries": 0,
       "repairs": 0,
       "handoffs": 0
@@ -221,7 +222,8 @@ window.STATE =
       "zone": [
         "frontend/"
       ],
-      "status": "pending",
+      "status": "in-progress",
+      "startedAt": "2026-09-27T16:09:52+05:00",
       "retries": 0,
       "repairs": 0,
       "handoffs": 0
@@ -285,16 +287,42 @@ window.STATE =
   "singlePass": null,
   "tests": null,
   "debt": {
-    "placeholders": ["S05 — адрес самовывоза (PICKUP_ADDRESS)", "S23 — цены seed-товаров — образцы"],
-    "assumptions": ["S01–S23 — самобрифинг, см. manifest.md / docs/DECISIONS.md"],
-    "emptyEnv": ["CUSTOMER_BOT_TOKEN", "ADMIN_BOT_TOKEN", "ADMIN_IDS", "WEBAPP_URL", "DOMAIN", "PICKUP_ADDRESS"]
+    "placeholders": [
+      "S05 — адрес самовывоза (PICKUP_ADDRESS)",
+      "S23 — цены seed-товаров — образцы"
+    ],
+    "assumptions": [
+      "S01–S23 — самобрифинг, см. manifest.md / docs/DECISIONS.md"
+    ],
+    "emptyEnv": [
+      "CUSTOMER_BOT_TOKEN",
+      "ADMIN_BOT_TOKEN",
+      "ADMIN_IDS",
+      "WEBAPP_URL",
+      "DOMAIN",
+      "PICKUP_ADDRESS"
+    ]
   },
-  "additions": ["A01 — TELEGRAM_API_BASE для мок-сервера Telegram в E2E (ради R59)"],
-  "coverage": {"findings": 22, "missing": 14, "half": 7, "extra": "~45 deepening items (R##.n) + A01", "action": "process rules copied into spec Процесс; retry wording corrected; extras are deepening of brief rows, kept"},
-  "concerns": [],
+  "additions": [
+    "A01 — TELEGRAM_API_BASE для мок-сервера Telegram в E2E (ради R59)"
+  ],
+  "coverage": {
+    "findings": 22,
+    "missing": 14,
+    "half": 7,
+    "extra": "~45 deepening items (R##.n) + A01",
+    "action": "process rules copied into spec Процесс; retry wording corrected; extras are deepening of brief rows, kept"
+  },
+  "concerns": [
+    "backend/app/models.py — naive DateTime columns (UTC by convention, re-attach tz on read)",
+    "backend/app/main.py:14 — include_routers hook not in spec seam table (internal, recorded in interfaces.md)",
+    "backend/app/auth.py:103-125 — customer_user/admin_user duplicate validate+except shape",
+    "backend/app/config.py:39-40 — malformed ADMIN_IDS raises bare ValueError",
+    "backend/app/models.py — no round-trip test that tz survives on DateTime columns"
+  ],
   "reviewers": {
-    "manifestSpec": null,
-    "craft": null
+    "manifestSpec": "ad63e74d060485c43",
+    "craft": "aa698c67331c31f86"
   },
   "blind": null
 }

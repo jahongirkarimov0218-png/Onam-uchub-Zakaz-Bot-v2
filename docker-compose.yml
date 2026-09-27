@@ -1,0 +1,32 @@
+# NOT RUN in this session (Docker isn't installed here) — see README.md
+# section 4 for the VPS deploy steps (`docker compose up -d`).
+services:
+  app:
+    build: .
+    restart: unless-stopped
+    env_file: .env
+    volumes:
+      - app-data:/app/backend/data
+      - app-uploads:/app/backend/uploads
+    expose:
+      - "8000"
+
+  caddy:
+    image: caddy:2
+    restart: unless-stopped
+    depends_on:
+      - app
+    ports:
+      - "80:80"
+      - "443:443"
+    env_file: .env
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+
+volumes:
+  app-data:
+  app-uploads:
+  caddy-data:
+  caddy-config:

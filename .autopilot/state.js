@@ -11,7 +11,7 @@ window.STATE =
   "memoryFile": "CLAUDE.md",
   "skillDir": "C:/Users/user/.claude/skills/autopilot",
   "startedAt": "2026-09-27T15:46:43+05:00",
-  "updatedAt": "2026-09-27T16:11:41+05:00",
+  "updatedAt": "2026-09-27T21:44:17+05:00",
   "finishedAt": null,
   "stages": [
     {
@@ -44,7 +44,8 @@ window.STATE =
     },
     {
       "id": "build",
-      "status": "pending"
+      "status": "pending",
+      "note": "6 из 7 тасков готовы"
     },
     {
       "id": "review",
@@ -85,10 +86,16 @@ window.STATE =
       "zone": [
         "backend/"
       ],
-      "status": "review",
+      "status": "done",
       "retries": 0,
       "repairs": 0,
-      "handoffs": 0
+      "handoffs": 0,
+      "finishedAt": "2026-09-27T16:12:19+05:00",
+      "commit": "4bde3ea",
+      "tests": {
+        "passed": 25,
+        "failed": 0
+      }
     },
     {
       "id": "02",
@@ -116,10 +123,21 @@ window.STATE =
         "backend/app/uploads",
         "backend/app/api/catalog"
       ],
-      "status": "pending",
+      "status": "done",
       "retries": 0,
-      "repairs": 0,
-      "handoffs": 0
+      "repairs": 2,
+      "handoffs": 0,
+      "startedAt": "2026-09-27T16:12:20+05:00",
+      "repairFindings": [
+        "customer catalog endpoints accept requests without initData (R48, story 47)",
+        "PATCH explicit null must clear optional fields"
+      ],
+      "finishedAt": "2026-09-27T16:27:29+05:00",
+      "commit": "424d9f7",
+      "tests": {
+        "passed": 66,
+        "failed": 0
+      }
     },
     {
       "id": "03",
@@ -149,10 +167,24 @@ window.STATE =
         "backend/app/services/orders",
         "backend/app/api/orders"
       ],
-      "status": "pending",
+      "status": "done",
       "retries": 0,
-      "repairs": 0,
-      "handoffs": 0
+      "repairs": 1,
+      "handoffs": 0,
+      "startedAt": "2026-09-27T16:27:29+05:00",
+      "repairFindings": [
+        "phone normalisation (spaces, +intl)",
+        "admin orders limit 1..200",
+        "change_status concurrency guard",
+        "delivered_month_sum by history time",
+        "tz midnight test"
+      ],
+      "finishedAt": "2026-09-27T20:27:14+05:00",
+      "commit": "466c48e",
+      "tests": {
+        "passed": 127,
+        "failed": 0
+      }
     },
     {
       "id": "04",
@@ -187,10 +219,26 @@ window.STATE =
         "backend/app/bots/",
         "backend/app/scheduler"
       ],
-      "status": "pending",
+      "status": "done",
       "retries": 0,
-      "repairs": 0,
-      "handoffs": 0
+      "repairs": 1,
+      "handoffs": 0,
+      "startedAt": "2026-09-27T20:27:14+05:00",
+      "repairFindings": [
+        "BLOCKING /order_<id> message not re-rendered after button",
+        "commands @BotName suffix",
+        "admin unknown text ≠ Ruxsat yo'q",
+        "strings into texts.py",
+        "close bot sessions",
+        "chat menu button",
+        "naive now rejected"
+      ],
+      "finishedAt": "2026-09-27T21:02:53+05:00",
+      "commit": "65866ea",
+      "tests": {
+        "passed": 189,
+        "failed": 0
+      }
     },
     {
       "id": "05",
@@ -222,11 +270,20 @@ window.STATE =
       "zone": [
         "frontend/"
       ],
-      "status": "in-progress",
+      "status": "done",
       "startedAt": "2026-09-27T16:09:52+05:00",
       "retries": 0,
-      "repairs": 0,
-      "handoffs": 0
+      "repairs": 1,
+      "handoffs": 1,
+      "repairFindings": [
+        "BackButton, cart +/- with labels, phone normalisation, i18n leftovers, 2 missing tests, ESLint (HIGH), upload unmount guard"
+      ],
+      "finishedAt": "2026-09-27T16:38:14+05:00",
+      "commit": "935638e",
+      "tests": {
+        "passed": 28,
+        "failed": 0
+      }
     },
     {
       "id": "06",
@@ -249,10 +306,26 @@ window.STATE =
       "zone": [
         "frontend/src/admin/"
       ],
-      "status": "pending",
+      "status": "done",
       "retries": 0,
-      "repairs": 0,
-      "handoffs": 0
+      "repairs": 1,
+      "handoffs": 0,
+      "startedAt": "2026-09-27T16:38:14+05:00",
+      "repairFindings": [
+        "HIGH double-submit on admin CRUD",
+        "HIGH BackButton listener leak (shared)",
+        "me() network error ≠ 403",
+        "description null on clear",
+        "history source i18n",
+        "product form validation",
+        "exhaustive-deps disables"
+      ],
+      "finishedAt": "2026-09-27T20:47:54+05:00",
+      "commit": "69cba60",
+      "tests": {
+        "passed": 67,
+        "failed": 0
+      }
     },
     {
       "id": "07",
@@ -278,14 +351,22 @@ window.STATE =
         "Dockerfile",
         "README.md"
       ],
-      "status": "pending",
+      "status": "repair",
       "retries": 0,
-      "repairs": 0,
-      "handoffs": 0
+      "repairs": 2,
+      "handoffs": 0,
+      "startedAt": "2026-09-27T21:02:53+05:00",
+      "repairFindings": [
+        "npm run lint red: vite.config.ts triple-slash reference",
+        "README shop name, e2e browsers path, root .env, mom guide UI labels"
+      ]
     }
   ],
   "singlePass": null,
-  "tests": null,
+  "tests": {
+    "passed": 25,
+    "failed": 0
+  },
   "debt": {
     "placeholders": [
       "S05 — адрес самовывоза (PICKUP_ADDRESS)",
@@ -318,11 +399,20 @@ window.STATE =
     "backend/app/main.py:14 — include_routers hook not in spec seam table (internal, recorded in interfaces.md)",
     "backend/app/auth.py:103-125 — customer_user/admin_user duplicate validate+except shape",
     "backend/app/config.py:39-40 — malformed ADMIN_IDS raises bare ValueError",
-    "backend/app/models.py — no round-trip test that tz survives on DateTime columns"
+    "backend/app/models.py — no round-trip test that tz survives on DateTime columns",
+    "backend/app/api/catalog.py:64-79 + admin_catalog.py:84-99 — upload endpoint shape duplicated (429/413/415 mapping)",
+    "backend/tests/test_admin_catalog_api.py:52 — test name promises admin-side history check not asserted",
+    "T02 repair #2 (PATCH null → 422) accepted on test evidence (red-before-green, 5 parametrized cases) without a separate re-review — reviewer was busy with T05",
+    "T05 repair accepted on test/lint/build evidence without separate re-review (reviewers busy with T03)",
+    "frontend/src/app/screens/Orders.tsx:61-65 — key={idx} on order items",
+    "backend/app/api/orders.py:33-35 + admin_orders.py:22-24 — duplicated tz re-attach snippet",
+    "backend/app/main.py:65 — admin menu button set globally (non-admins see entry, API 403 protects data)",
+    "backend/app/bots/admin.py — commands matched by regex filters instead of aiogram Command (testability choice)"
   ],
   "reviewers": {
     "manifestSpec": "ad63e74d060485c43",
-    "craft": "aa698c67331c31f86"
+    "craft": "aa698c67331c31f86",
+    "craftFrontend": "a10b1b1ed11b8de65"
   },
   "blind": null
 }

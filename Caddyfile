@@ -1,0 +1,8 @@
+# NOT RUN in this session (Docker isn't installed here) — see README.md
+# section 4. {$DOMAIN} comes from the .env file used by `docker compose`
+# (env_file: .env for the caddy service in docker-compose.yml). Caddy gets
+# and renews a Let's Encrypt certificate automatically for a real domain —
+# no manual HTTPS setup needed, as long as DNS points at this server first.
+{$DOMAIN} {
+	reverse_proxy app:8000
+}

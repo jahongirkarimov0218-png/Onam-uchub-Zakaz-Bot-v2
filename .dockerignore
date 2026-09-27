@@ -1,0 +1,29 @@
+# Written for the Docker build described in README.md — NOT RUN in this
+# session (Docker isn't installed here).
+.git
+.autopilot
+CLAUDE.md
+docs
+
+.venv
+**/__pycache__
+*.pyc
+.pytest_cache
+.coverage
+htmlcov
+backend/.tmp-e2e
+backend/data
+backend/uploads
+*.db
+*.sqlite3
+*.egg-info
+
+frontend/node_modules
+frontend/dist
+frontend/test-results
+frontend/playwright-report
+.playwright-browsers
+
+.env
+.env.*
+!.env.example

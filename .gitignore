@@ -19,3 +19,4 @@ playwright-report/
 backend/uploads/
 !backend/uploads/.gitkeep
 *.egg-info/
+backend/.tmp-e2e/

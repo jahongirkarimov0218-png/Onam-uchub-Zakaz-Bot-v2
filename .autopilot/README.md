@@ -19,4 +19,4 @@
 
 | Начат | Папка | Статус | Итог |
 |---|---|---|---|
-| 2026-09-27 | `2026-09-27-onam-shop--wip` | в работе | — |
+| 2026-09-27 | `2026-09-27-onam-shop` | сдан | Telegram do'kon «Faberlik Sotuv Bot»: mijoz va admin Mini App, 2 bot, eslatmalar, kunlik hisobot, testlar, Docker/Caddy, README |

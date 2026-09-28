@@ -16,4 +16,4 @@ Tartib briefdagidek: DB modellari va migratsiyalar → initData auth → mahsulo
 
 Keyin: review (python / typescript / react / security reviewer), E2E, quality-gate + verification-loop, README.
 
-Task fayllari: `.autopilot/2026-09-27-onam-shop--wip/tickets/`.
+Task fayllari: `.autopilot/2026-09-27-onam-shop/tickets/`.

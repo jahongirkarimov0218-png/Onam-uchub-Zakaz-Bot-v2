@@ -1,6 +1,6 @@
 # Arxitektura — Faberlik Sotuv Bot
 
-Manba: `.autopilot/2026-09-27-onam-shop--wip/spec.md` (to'liq spetsifikatsiya). Bu fayl DB sxemasi, API endpointlari, modul chegaralari va bot oqimlarini jamlaydi.
+Manba: `.autopilot/2026-09-27-onam-shop/spec.md` (to'liq spetsifikatsiya). Bu fayl DB sxemasi, API endpointlari, modul chegaralari va bot oqimlarini jamlaydi.
 
 ## Bot oqimlari
 

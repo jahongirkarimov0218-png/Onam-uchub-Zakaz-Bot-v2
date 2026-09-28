@@ -1,7 +1,7 @@
 window.STATE =
 {
   "slug": "onam-shop",
-  "dir": "2026-09-27-onam-shop--wip",
+  "dir": "2026-09-27-onam-shop",
   "title": "Faberlik Sotuv Bot — Telegram Mini App do'koni",
   "mode": "full",
   "depth": "normal",
@@ -11,8 +11,8 @@ window.STATE =
   "memoryFile": "CLAUDE.md",
   "skillDir": "C:/Users/user/.claude/skills/autopilot",
   "startedAt": "2026-09-27T15:46:43+05:00",
-  "updatedAt": "2026-09-27T21:44:17+05:00",
-  "finishedAt": null,
+  "updatedAt": "2026-09-28T06:15:42+05:00",
+  "finishedAt": "2026-09-28T06:15:42+05:00",
   "stages": [
     {
       "id": "preflight",
@@ -35,33 +35,45 @@ window.STATE =
     },
     {
       "id": "spec",
-      "status": "active",
-      "startedAt": "2026-09-27T15:49:23+05:00"
+      "status": "done",
+      "startedAt": "2026-09-27T15:49:23+05:00",
+      "finishedAt": "2026-09-27T21:51:05+05:00"
     },
     {
       "id": "plan",
-      "status": "pending"
+      "status": "done",
+      "startedAt": "2026-09-27T15:55:01+05:00",
+      "finishedAt": "2026-09-27T16:01:51+05:00",
+      "note": "7 тасков, 5 волн, ярус T2"
     },
     {
       "id": "build",
-      "status": "pending",
-      "note": "6 из 7 тасков готовы"
+      "status": "done",
+      "note": "8 из 8 тасков готовы (08 — фикс после security review)",
+      "startedAt": "2026-09-27T16:01:51+05:00",
+      "finishedAt": "2026-09-27T21:51:05+05:00"
     },
     {
       "id": "review",
-      "status": "pending"
+      "status": "done",
+      "startedAt": "2026-09-27T16:09:52+05:00",
+      "finishedAt": "2026-09-27T21:51:19+05:00",
+      "note": "проверено 7 из 7"
     },
     {
       "id": "final",
-      "status": "pending"
+      "status": "done",
+      "startedAt": "2026-09-27T21:51:05+05:00",
+      "finishedAt": "2026-09-28T06:15:42+05:00",
+      "note": "слепая приёмка: всё из брифа работает; security: 0 CRITICAL / 0 HIGH"
     }
   ],
   "requirements": {
     "total": 71,
-    "done": 0,
-    "inTicket": 60,
-    "inSpec": 11,
-    "placeholder": 0,
+    "done": 70,
+    "inTicket": 0,
+    "inSpec": 0,
+    "placeholder": 1,
     "deferred": 0,
     "dropped": 0
   },
@@ -351,7 +363,7 @@ window.STATE =
         "Dockerfile",
         "README.md"
       ],
-      "status": "repair",
+      "status": "done",
       "retries": 0,
       "repairs": 2,
       "handoffs": 0,
@@ -359,12 +371,47 @@ window.STATE =
       "repairFindings": [
         "npm run lint red: vite.config.ts triple-slash reference",
         "README shop name, e2e browsers path, root .env, mom guide UI labels"
-      ]
+      ],
+      "finishedAt": "2026-09-27T21:51:05+05:00",
+      "commit": "1558d43",
+      "tests": {
+        "passed": 258,
+        "failed": 0
+      }
+    },
+    {
+      "id": "08",
+      "title": "Xavfsizlik tuzatishlari (final security review)",
+      "requirements": [
+        "R52",
+        "R53",
+        "R15"
+      ],
+      "blockedBy": [
+        "07"
+      ],
+      "wave": 6,
+      "zone": [
+        "backend/app/main.py",
+        "Caddyfile",
+        "Dockerfile"
+      ],
+      "status": "done",
+      "retries": 0,
+      "repairs": 0,
+      "handoffs": 0,
+      "startedAt": "2026-09-27T21:57:57+05:00",
+      "finishedAt": "2026-09-28T06:12:46+05:00",
+      "commit": "0097e7f",
+      "tests": {
+        "passed": 196,
+        "failed": 0
+      }
     }
   ],
   "singlePass": null,
   "tests": {
-    "passed": 25,
+    "passed": 264,
     "failed": 0
   },
   "debt": {
@@ -407,12 +454,24 @@ window.STATE =
     "frontend/src/app/screens/Orders.tsx:61-65 — key={idx} on order items",
     "backend/app/api/orders.py:33-35 + admin_orders.py:22-24 — duplicated tz re-attach snippet",
     "backend/app/main.py:65 — admin menu button set globally (non-admins see entry, API 403 protects data)",
-    "backend/app/bots/admin.py — commands matched by regex filters instead of aiogram Command (testability choice)"
+    "backend/app/bots/admin.py — commands matched by regex filters instead of aiogram Command (testability choice)",
+    "security MEDIUM: JPEG check prefix-only (polyglot possible; Pillow not in allowed packages)",
+    "security LOW: empty tokens give silent 401s, no startup warning",
+    "security LOW: in-memory rate limiter per process",
+    "security LOW: docker-compose pins caddy:2 (floating); request_body needs Caddy ≥2.7"
   ],
   "reviewers": {
     "manifestSpec": "ad63e74d060485c43",
     "craft": "aa698c67331c31f86",
     "craftFrontend": "a10b1b1ed11b8de65"
   },
-  "blind": null
+  "blind": {
+    "verdict": "все требования брифа реализованы; частично — только процессные пункты, закрываемые в финале (security fix T08, PROGRESS.md, финальный коммит)",
+    "drift": [],
+    "notes": [
+      "vitest однажды упал по таймауту при параллельном прогоне с pytest; в одиночку 67/67",
+      "живые боты не проверены — нет реальных токенов (ограничение брифа)",
+      "нажатие inline-кнопки проверено pytest, в e2e статус меняли из admin Mini App"
+    ]
+  }
 }

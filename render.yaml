@@ -1,0 +1,53 @@
+# Render Blueprint: backend (FastAPI + 2 aiogram bots) on Render Free, native Python runtime (no Docker).
+# The existing Docker deploy (Dockerfile, docker-compose.yml, Caddyfile) stays unchanged and is not used here.
+# Secret values are never stored in this file: `sync: false` vars are filled in the Render dashboard.
+services:
+  - type: web
+    name: onam-backend
+    runtime: python
+    plan: free
+    rootDir: backend
+    buildCommand: pip install .
+    startCommand: mkdir -p data uploads && alembic upgrade head && uvicorn app.main:create_app --factory --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.11.11"
+      - key: BOTS_ENABLED
+        value: "true"
+      - key: DATABASE_URL
+        value: "sqlite+aiosqlite:///./data/onam.db"
+      - key: UPLOAD_DIR
+        value: "uploads"
+      - key: INIT_DATA_MAX_AGE_SECONDS
+        value: "86400"
+      - key: REMINDER_FIRST_HOURS
+        value: "2"
+      - key: REMINDER_REPEAT_HOURS
+        value: "4"
+      - key: REMINDER_CHECK_MINUTES
+        value: "5"
+      - key: DAILY_REPORT_TIME
+        value: "09:00"
+      - key: TIMEZONE
+        value: "Asia/Tashkent"
+      - key: RATE_LIMIT_ORDERS
+        value: "5"
+      - key: RATE_LIMIT_UPLOADS
+        value: "10"
+      - key: RATE_LIMIT_WINDOW_SECONDS
+        value: "600"
+      - key: MAX_UPLOAD_MB
+        value: "5"
+      - key: CUSTOMER_BOT_TOKEN
+        sync: false
+      - key: ADMIN_BOT_TOKEN
+        sync: false
+      - key: ADMIN_IDS
+        sync: false
+      - key: WEBAPP_URL
+        sync: false
+      - key: SHOP_NAME
+        sync: false
+      - key: PICKUP_ADDRESS
+        sync: false

@@ -28,7 +28,12 @@ RUN pip install --no-cache-dir .
 
 COPY --from=frontend-build /src/frontend/dist /app/frontend/dist
 
-RUN mkdir -p data uploads
+# Non-root runtime user (security review ticket 08): the app only ever needs
+# to write under data/ (sqlite db) and uploads/ (saved files), so those are
+# the only paths it owns.
+RUN mkdir -p data uploads \
+    && groupadd -r app && useradd -r -g app -d /app/backend app \
+    && chown -R app:app /app/backend
 
 ENV DATABASE_URL=sqlite+aiosqlite:///./data/onam.db \
     UPLOAD_DIR=uploads \
@@ -36,6 +41,8 @@ ENV DATABASE_URL=sqlite+aiosqlite:///./data/onam.db \
     PYTHONUNBUFFERED=1
 
 EXPOSE 8000
+
+USER app
 
 # `app.main` only exposes the `create_app()` factory (no module-level `app`
 # instance), hence `--factory` — see docs/DECISIONS.md / ticket 07 notes.

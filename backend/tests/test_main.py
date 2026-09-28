@@ -48,3 +48,35 @@ async def test_app_serves_asgi_smoke(app):
 def test_create_app_defaults_notifier_to_null_notifier(settings):
     app = create_app(settings=settings)
     assert isinstance(app.state.notifier, NullNotifier)
+
+
+async def test_oversized_content_length_on_upload_path_is_413_before_auth_runs(app, settings):
+    # Raw ASGI call (bypasses httpx, which would recompute Content-Length):
+    # proves the body-size middleware sits in front of the app, rejecting by
+    # a lying Content-Length before even the auth dependency runs — no
+    # Authorization header is supplied here.
+    limit = settings.max_upload_mb * 1024 * 1024 + 64 * 1024
+    scope = {
+        "type": "http",
+        "method": "POST",
+        "path": "/api/uploads",
+        "headers": [(b"content-length", str(limit + 1).encode())],
+        "query_string": b"",
+        "client": ("127.0.0.1", 1234),
+        "server": ("testserver", 80),
+        "scheme": "http",
+        "root_path": "",
+        "http_version": "1.1",
+    }
+    sent = []
+
+    async def receive():
+        raise AssertionError("body must not be read")
+
+    async def send(message):
+        sent.append(message)
+
+    await app(scope, receive, send)
+
+    assert sent[0]["type"] == "http.response.start"
+    assert sent[0]["status"] == 413

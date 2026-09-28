@@ -16,6 +16,7 @@ from fastapi.staticfiles import StaticFiles
 from . import texts
 from .api import admin_catalog, admin_orders, catalog, orders
 from .auth import TgUser, admin_user
+from .bodylimit import BodySizeLimitMiddleware
 from .bots.admin import admin_router
 from .bots.customer import customer_router
 from .config import Settings, get_settings
@@ -112,6 +113,11 @@ def create_app(settings: Settings | None = None, notifier: Notifier | None = Non
     app.state.settings = settings
     app.state.notifier = notifier or NullNotifier()
     app.dependency_overrides[get_settings] = lambda: settings
+
+    # Defense in depth for POST /api/uploads and POST /api/admin/uploads:
+    # rejects an oversized body (413 file_too_large) before it is spooled by
+    # python-multipart / save_upload's own check. See app.bodylimit.
+    app.add_middleware(BodySizeLimitMiddleware, settings=settings)
 
     engine = make_engine(settings.database_url)
     app.state.engine = engine

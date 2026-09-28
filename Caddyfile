@@ -3,6 +3,14 @@
 # (env_file: .env for the caddy service in docker-compose.yml). Caddy gets
 # and renews a Let's Encrypt certificate automatically for a real domain —
 # no manual HTTPS setup needed, as long as DNS points at this server first.
+#
+# request_body max_size caps every request body at the edge (~6 MB: 5 MB
+# MAX_UPLOAD_MB default + multipart overhead) as a second layer in front of
+# the app's own BodySizeLimitMiddleware (backend/app/bodylimit.py) — security
+# review ticket 08.
 {$DOMAIN} {
+	request_body {
+		max_size 6MB
+	}
 	reverse_proxy app:8000
 }
